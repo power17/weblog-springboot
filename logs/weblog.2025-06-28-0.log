@@ -1,0 +1,16 @@
+[TraceId: ] 2025-06-28 16:54:50.072 [main] INFO  com.power.weblog.web.WeblogWebApplication - Starting WeblogWebApplication using Java 1.8.0_311 on DESKTOP-MFL0G56 with PID 16240 (E:\java-code\weblog-springboot\weblog-web\target\classes started by mayn in E:\java-code\weblog-springboot)
+[TraceId: ] 2025-06-28 16:54:50.073 [main] INFO  com.power.weblog.web.WeblogWebApplication - The following profiles are active: prod
+[TraceId: ] 2025-06-28 16:54:50.665 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+[TraceId: ] 2025-06-28 16:54:50.670 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+[TraceId: ] 2025-06-28 16:54:50.670 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.56]
+[TraceId: ] 2025-06-28 16:54:50.715 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+[TraceId: ] 2025-06-28 16:54:50.716 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 611 ms
+[TraceId: ] 2025-06-28 16:54:50.950 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+[TraceId: ] 2025-06-28 16:54:50.955 [main] INFO  com.power.weblog.web.WeblogWebApplication - Started WeblogWebApplication in 1.238 seconds (JVM running for 1.784)
+[TraceId: ] 2025-06-28 16:56:12.154 [http-nio-8080-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+[TraceId: ] 2025-06-28 16:56:12.154 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+[TraceId: ] 2025-06-28 16:56:12.154 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 0 ms
+[TraceId: 154ef4b1-98e7-46cf-8a0c-e6f25d6f2582] 2025-06-28 16:56:12.369 [http-nio-8080-exec-1] INFO  c.power.weblog.common.aspect.ApiOperationLogAspect - ====== 请求开始: [测试接口], 入参: {"username":"admin","sex":1}, 请求类: TestController, 请求方法: test =================================== 
+[TraceId: 154ef4b1-98e7-46cf-8a0c-e6f25d6f2582] 2025-06-28 16:56:12.380 [http-nio-8080-exec-1] INFO  c.power.weblog.common.aspect.ApiOperationLogAspect - ====== 请求结束: [测试接口], 耗时: 35ms, 出参: {"username":"admin","sex":1} =================================== 
+[TraceId: 7e9cbf00-543d-40b4-82c3-c4af16a2467f] 2025-06-28 17:03:15.135 [http-nio-8080-exec-5] INFO  c.power.weblog.common.aspect.ApiOperationLogAspect - ====== 请求开始: [测试接口], 入参: {"username":"admin","sex":1}, 请求类: TestController, 请求方法: test =================================== 
+[TraceId: 7e9cbf00-543d-40b4-82c3-c4af16a2467f] 2025-06-28 17:03:15.135 [http-nio-8080-exec-5] INFO  c.power.weblog.common.aspect.ApiOperationLogAspect - ====== 请求结束: [测试接口], 耗时: 0ms, 出参: {"username":"admin","sex":1} =================================== 
