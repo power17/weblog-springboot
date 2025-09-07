@@ -1,6 +1,8 @@
 package com.power.weblog.admin.controller;
 
 import com.power.weblog.admin.model.VO.article.DeleteArticleReqVO;
+import com.power.weblog.admin.model.VO.article.FindArticleDetailReqVO;
+import com.power.weblog.admin.model.VO.article.FindArticlePageListReqVO;
 import com.power.weblog.admin.model.VO.article.PublishArticleReqVO;
 import com.power.weblog.admin.service.AdminArticleService;
 import com.power.weblog.common.aspect.ApiOperationLog;
@@ -38,5 +40,20 @@ public class AdminArticleController {
     public Response deleteArticle(@RequestBody @Validated DeleteArticleReqVO deleteArticleReqVO) {
         return articleService.deleteArticle(deleteArticleReqVO);
     }
+
+    @PostMapping("/list")
+    @ApiOperation(value = "查询文章分页数据")
+    @ApiOperationLog(description = "查询文章分页数据")
+    public Response findArticlePageList(@RequestBody @Validated FindArticlePageListReqVO findArticlePageListReqVO) {
+        return articleService.findArticlePageList(findArticlePageListReqVO);
+    }
+
+    @PostMapping("/detail")
+    @ApiOperation(value = "查询文章详情")
+    @ApiOperationLog(description = "查询文章详情")
+    public Response findArticleDetail(@RequestBody @Validated FindArticleDetailReqVO findArticlePageListReqVO) {
+        return articleService.findArticleDetail(findArticlePageListReqVO);
+    }
+
 
 }

@@ -1,20 +1,23 @@
 package com.power.weblog.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
-import com.power.weblog.admin.model.VO.article.DeleteArticleReqVO;
-import com.power.weblog.admin.model.VO.article.PublishArticleReqVO;
+import com.power.weblog.admin.convert.ArticleDetailConvert;
+import com.power.weblog.admin.model.VO.article.*;
 import com.power.weblog.admin.service.AdminArticleService;
 import com.power.weblog.common.domain.dos.*;
 import com.power.weblog.common.domain.mapper.*;
 import com.power.weblog.common.enums.BizException;
 import com.power.weblog.common.enums.ResponseCodeEnum;
+import com.power.weblog.common.utils.PageResponse;
 import com.power.weblog.common.utils.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.List;
@@ -197,6 +200,79 @@ public class AdminArticleServiceImpl implements AdminArticleService {
 
          return Response.success();
      }
+
+    /**
+     * 查询文章分页数据
+     *
+     * @param findArticlePageListReqVO
+     * @return
+     */
+    @Override
+    public Response findArticlePageList(FindArticlePageListReqVO findArticlePageListReqVO) {
+        // 获取当前页、以及每页需要展示的数据数量
+        Long current = findArticlePageListReqVO.getCurrent();
+        Long size = findArticlePageListReqVO.getSize();
+        String title = findArticlePageListReqVO.getTitle();
+        LocalDate startDate = findArticlePageListReqVO.getStartDate();
+        LocalDate endDate = findArticlePageListReqVO.getEndDate();
+
+        // 执行分页查询
+        Page<ArticleDO> articleDOPage = articleMapper.selectPageList(current, size, title, startDate, endDate);
+
+        List<ArticleDO> articleDOS = articleDOPage.getRecords();
+
+        // DO 转 VO
+        List<FindArticlePageListRspVO> vos = null;
+        if (!CollectionUtils.isEmpty(articleDOS)) {
+            vos = articleDOS.stream()
+                    .map(articleDO -> FindArticlePageListRspVO.builder()
+                            .id(articleDO.getId())
+                            .title(articleDO.getTitle())
+                            .cover(articleDO.getCover())
+                            .createTime(articleDO.getCreateTime())
+                            .build())
+                    .collect(Collectors.toList());
+        }
+
+        return PageResponse.success(articleDOPage, vos);
+    }
+
+    /**
+     * 查询文章详情
+     *
+     * @param findArticlePageListReqVO
+     * @return
+     */
+    @Override
+    public Response findArticleDetail(FindArticleDetailReqVO findArticleDetailReqVO) {
+        Long articleId = findArticleDetailReqVO.getId();
+
+        ArticleDO articleDO = articleMapper.selectById(articleId);
+
+        if (Objects.isNull(articleDO)) {
+            log.warn("==> 查询的文章不存在，articleId: {}", articleId);
+            throw new BizException(ResponseCodeEnum.ARTICLE_NOT_FOUND);
+        }
+
+        ArticleContentDO articleContentDO = articleContentMapper.selectByArticleId(articleId);
+
+        // 所属分类
+        ArticleCategoryRelDO articleCategoryRelDO = articleCategoryRelMapper.selectByArticleId(articleId);
+
+        // 对应标签
+        List<ArticleTagRelDO> articleTagRelDOS = articleTagRelMapper.selectByArticleId(articleId);
+        // 获取对应标签 ID 集合
+        List<Long> tagIds = articleTagRelDOS.stream().map(ArticleTagRelDO::getTagId).collect(Collectors.toList());
+
+        // DO 转 VO
+        FindArticleDetailRspVO vo = ArticleDetailConvert.INSTANCE.convertDO2VO(articleDO);
+        vo.setContent(articleContentDO.getContent());
+        vo.setCategoryId(articleCategoryRelDO.getCategoryId());
+        vo.setTagIds(tagIds);
+
+        return Response.success(vo);
+    }
+
 
 }
 
