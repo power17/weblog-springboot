@@ -1,9 +1,6 @@
 package com.power.weblog.admin.service;
 
-import com.power.weblog.admin.model.VO.article.DeleteArticleReqVO;
-import com.power.weblog.admin.model.VO.article.FindArticleDetailReqVO;
-import com.power.weblog.admin.model.VO.article.FindArticlePageListReqVO;
-import com.power.weblog.admin.model.VO.article.PublishArticleReqVO;
+import com.power.weblog.admin.model.VO.article.*;
 import com.power.weblog.common.utils.Response;
 
 public interface AdminArticleService {
@@ -31,4 +28,10 @@ public interface AdminArticleService {
      * @return
      */
     Response findArticleDetail(FindArticleDetailReqVO findArticleDetailReqVO);
+    /**
+     * 更新文章
+     * @param updateArticleReqVO
+     * @return
+     */
+    Response updateArticle(UpdateArticleReqVO updateArticleReqVO);
 }
