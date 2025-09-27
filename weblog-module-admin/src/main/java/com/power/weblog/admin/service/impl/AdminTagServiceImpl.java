@@ -1,6 +1,7 @@
 package com.power.weblog.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
@@ -11,6 +12,7 @@ import com.power.weblog.common.domain.dos.TagDO;
 import com.power.weblog.common.domain.mapper.ArticleMapper;
 import com.power.weblog.common.domain.mapper.ArticleTagRelMapper;
 import com.power.weblog.common.domain.mapper.TagMapper;
+import com.power.weblog.common.enums.BizException;
 import com.power.weblog.common.enums.ResponseCodeEnum;
 import com.power.weblog.common.model.vo.SelectRspVO;
 import com.power.weblog.common.utils.PageResponse;
@@ -24,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,6 +35,8 @@ public class AdminTagServiceImpl extends ServiceImpl<TagMapper, TagDO> implement
 
     @Autowired
     private TagMapper tagMapper;
+    @Autowired
+    private ArticleTagRelMapper articleTagRelMapper;
 
     /**
      * 添加标签集合
@@ -62,7 +67,24 @@ public class AdminTagServiceImpl extends ServiceImpl<TagMapper, TagDO> implement
 
 
 
+    @Override
+    public Response findTagSelectList() {
+        // 查询所有标签, Wrappers.emptyWrapper() 表示查询条件为空
+        List<TagDO> tagDOS = tagMapper.selectList(Wrappers.emptyWrapper());
 
+        // DO 转 VO
+        List<SelectRspVO> vos = null;
+        if (!CollectionUtils.isEmpty(tagDOS)) {
+            vos = tagDOS.stream()
+                    .map(tagDO -> SelectRspVO.builder()
+                            .label(tagDO.getName())
+                            .value(tagDO.getId())
+                            .build())
+                    .collect(Collectors.toList());
+        }
+
+        return Response.success(vos);
+    }
 
     /**
      * 查询标签集合
@@ -97,24 +119,6 @@ public class AdminTagServiceImpl extends ServiceImpl<TagMapper, TagDO> implement
         return PageResponse.success(page, vos);
     }
     /**
-     * 删除标签
-     *
-     * @param deleteTagReqVO
-     * @return
-     */
-    @Override
-    public Response deleteTag(DeleteTagReqVO deleteTagReqVO) {
-        // 标签 ID
-        Long tagId = deleteTagReqVO.getId();
-
-        // 根据标签 ID 删除
-        int count = tagMapper.deleteById(tagId);
-
-        return count == 1 ? Response.success() : Response.fail(ResponseCodeEnum.TAG_NOT_EXISTED);
-    }
-
-
-    /**
      * 根据标签关键词模糊查询
      *
      * @param searchTagsReqVO
@@ -139,6 +143,31 @@ public class AdminTagServiceImpl extends ServiceImpl<TagMapper, TagDO> implement
         }
 
         return Response.success(vos);
+    }
+
+    /**
+     * 删除标签
+     *
+     * @param deleteTagReqVO
+     * @return
+     */
+    @Override
+    public Response deleteTag(DeleteTagReqVO deleteTagReqVO) {
+        // 标签 ID
+        Long tagId = deleteTagReqVO.getId();
+
+        // 校验该标签下是否有关联的文章，若有，则不允许删除，提示用户需要先删除标签下的文章
+        ArticleTagRelDO articleTagRelDO = articleTagRelMapper.selectOneByTagId(tagId);
+
+        if (Objects.nonNull(articleTagRelDO)) {
+            log.warn("==> 此标签下包含文章，无法删除，tagId: {}", tagId);
+            throw new BizException(ResponseCodeEnum.TAG_CAN_NOT_DELETE);
+        }
+
+        // 根据标签 ID 删除
+        int count = tagMapper.deleteById(tagId);
+
+        return count == 1 ? Response.success() : Response.fail(ResponseCodeEnum.TAG_NOT_EXISTED);
     }
 
 }

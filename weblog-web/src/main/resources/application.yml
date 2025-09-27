@@ -8,8 +8,8 @@ jwt:
   issuer: power
   # 秘钥
   secret: r2DzPTYqI9+4aGBkYH2E1E8/VxXqDOn4FWDj1NiGKWuLGUfvAdB8RpQzNJ2V5jVtxIzJCLF1M00k8IV5bj7ciw==
-  # token 过期时间（单位：分钟） 24*60
-  tokenExpireTime: 1440
+  # token 过期时间（单位：分钟） 24*60  1440
+  tokenExpireTime: 1
   # token 请求头中的 key 值
   tokenHeaderKey: Authorization
   # token 请求头中的 value 值前缀

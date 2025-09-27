@@ -58,7 +58,7 @@ public class AdminArticleController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Response updateArticle(@RequestBody @Validated UpdateArticleReqVO updateArticleReqVO) {
         return articleService.updateArticle(updateArticleReqVO);
-    }
+    } 
 
 
 }
